@@ -11,6 +11,8 @@ public class PlacementManager : MonoBehaviour
     public int depth;
     public int height;
     public int thickness;
+    public Material doorMat;
+
     private GameObject objPlacement;
 
     // Update is called once per frame

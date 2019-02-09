@@ -52,6 +52,24 @@ public class ProceduralObjectConstructor : MonoBehaviour
         rail.transform.localScale = new Vector3(worldLength - worldThickness * 2, worldThickness, .13f);
 
         CombineMesh();
+
+        GameObject doorLeft = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        doorLeft.tag = "Front";
+        doorLeft.layer = 2;
+        doorLeft.name = "DoorLeft";
+        doorLeft.GetComponent<MeshRenderer>().material = manager.doorMat;
+        doorLeft.transform.parent = this.transform;
+        doorLeft.transform.localPosition = new Vector3(worldLength / 4 + 0.001f, worldHeight / 2, -worldDepth / 2 - worldThickness / 2 - 0.002f);
+        doorLeft.transform.localScale = new Vector3(worldLength / 2 - 0.003f, worldHeight - 0.002f, worldThickness);
+
+        GameObject doorRight = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        doorRight.tag = "Front";
+        doorRight.layer = 2;
+        doorRight.name = "DoorRight";
+        doorRight.GetComponent<MeshRenderer>().material = manager.doorMat;
+        doorRight.transform.parent = this.transform;
+        doorRight.transform.localPosition = new Vector3(worldLength - (worldLength / 4 + 0.001f), worldHeight / 2, -worldDepth / 2 - worldThickness / 2 - 0.002f);
+        doorRight.transform.localScale = new Vector3(worldLength / 2 - 0.003f, worldHeight - 0.002f, worldThickness);
     }
 
     void CombineMesh()

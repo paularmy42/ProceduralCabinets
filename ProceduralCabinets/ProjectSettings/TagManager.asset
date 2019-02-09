@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Carcase
+  - Front
   layers:
   - Default
   - TransparentFX
