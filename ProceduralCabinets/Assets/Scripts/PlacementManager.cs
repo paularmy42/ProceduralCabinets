@@ -6,6 +6,7 @@ public class PlacementManager : MonoBehaviour
 {
 
     public GameObject cabinetPrefab;
+    public GameObject doorHinge;
 
     public int length;
     public int depth;
@@ -15,8 +16,12 @@ public class PlacementManager : MonoBehaviour
 
     private GameObject objPlacement;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
+    {
+        objPlacement = Instantiate(cabinetPrefab, new Vector3(0,0,0), Quaternion.identity);
+    }
+
+    void NoUpdate()
     {
         if (Input.GetMouseButtonDown(0))
         {

@@ -11,6 +11,9 @@ public class ProceduralObjectConstructor : MonoBehaviour
     private float worldHeight;
     private float worldThickness;
 
+    private GameObject leftDoorContainer;
+    private GameObject rightDoorContainer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,23 +56,30 @@ public class ProceduralObjectConstructor : MonoBehaviour
 
         CombineMesh();
 
+        leftDoorContainer = Instantiate(manager.doorHinge, this.transform);
+        leftDoorContainer.transform.localPosition = new Vector3(0.001f, worldHeight / 2, -worldDepth / 2 - worldThickness / 2 - 0.002f);
         GameObject doorLeft = GameObject.CreatePrimitive(PrimitiveType.Cube);
         doorLeft.tag = "Front";
         doorLeft.layer = 2;
         doorLeft.name = "DoorLeft";
         doorLeft.GetComponent<MeshRenderer>().material = manager.doorMat;
-        doorLeft.transform.parent = this.transform;
-        doorLeft.transform.localPosition = new Vector3(worldLength / 4 + 0.001f, worldHeight / 2, -worldDepth / 2 - worldThickness / 2 - 0.002f);
+        doorLeft.transform.parent = leftDoorContainer.transform.GetChild(0).GetChild(0).transform;
+        doorLeft.transform.localPosition = new Vector3(worldLength / 4, 0, 0);
         doorLeft.transform.localScale = new Vector3(worldLength / 2 - 0.003f, worldHeight - 0.002f, worldThickness);
+        doorLeft.AddComponent<MeshCollider>();
 
+        rightDoorContainer = Instantiate(manager.doorHinge, this.transform);
+        rightDoorContainer.transform.localPosition = new Vector3(worldLength - 0.001f, worldHeight / 2, -worldDepth / 2 - worldThickness / 2 - 0.002f);
+        rightDoorContainer.transform.rotation = new Quaternion(180, 0, 0, 0);
         GameObject doorRight = GameObject.CreatePrimitive(PrimitiveType.Cube);
         doorRight.tag = "Front";
         doorRight.layer = 2;
         doorRight.name = "DoorRight";
         doorRight.GetComponent<MeshRenderer>().material = manager.doorMat;
-        doorRight.transform.parent = this.transform;
-        doorRight.transform.localPosition = new Vector3(worldLength - (worldLength / 4 + 0.001f), worldHeight / 2, -worldDepth / 2 - worldThickness / 2 - 0.002f);
+        doorRight.transform.parent = rightDoorContainer.transform.GetChild(0).GetChild(0).transform;
+        doorRight.transform.localPosition = new Vector3(-worldLength / 4, 0, 0);
         doorRight.transform.localScale = new Vector3(worldLength / 2 - 0.003f, worldHeight - 0.002f, worldThickness);
+        doorRight.AddComponent<MeshCollider>();
     }
 
     void CombineMesh()
