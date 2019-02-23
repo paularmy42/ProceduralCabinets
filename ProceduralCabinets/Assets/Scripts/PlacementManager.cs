@@ -1,51 +1,122 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VRTK;
 
 public class PlacementManager : MonoBehaviour
 {
-
     public GameObject cabinetPrefab;
     public GameObject doorHinge;
+    public GameObject leftController;
+    public GameObject rightController;
+    private GameObject activeController;
 
-    public int length;
-    public int depth;
-    public int height;
-    public int thickness;
-    public Material doorMat;
-
-    private GameObject objPlacement;
-
-    private void Start()
+    private static int _length;
+    public static int length
     {
-        objPlacement = Instantiate(cabinetPrefab, new Vector3(0,0,0), Quaternion.identity);
+        get { return _length; }
+        set { _length = value; }
     }
 
-    void NoUpdate()
+    private static int _depth;
+    public static int depth
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, 1000.0f))
-            {
-                Debug.Log(hit.point);
-                objPlacement = Instantiate(cabinetPrefab, hit.point, Quaternion.identity);
-            }
-        }
+        get { return _depth; }
+        set { _depth = value; }
+    }
 
-        if (Input.GetMouseButton(0) && objPlacement)
+    private static int _height;
+    public static int height
+    {
+        get { return _height; }
+        set { _height = value; }
+    }
+
+    public int thickness;
+
+    public Material[] faceMaterials;
+
+    private static Material _faceMat;
+    public static Material faceMat
+    {
+        get { return _faceMat; }
+        set { _faceMat = value; }
+    }
+
+    private GameObject objPlacement;
+    private VRTK_Pointer pointer;
+
+    void Start()
+    {
+        CabinetManager.OnCabinetStateChanged.AddListener(CabinetStateChangedHandler);
+        leftController.GetComponent<VRTK_ControllerEvents>().TriggerClicked += new ControllerInteractionEventHandler(OnLeftTriggerClicked);
+        //leftController.GetComponent<VRTK_ControllerEvents>().ButtonTwoPressed += new ControllerInteractionEventHandler(OnLeftTriggerClicked);
+        rightController.GetComponent<VRTK_ControllerEvents>().TriggerClicked += new ControllerInteractionEventHandler(OnRightTriggerClicked);
+    }
+
+    void Update()
+    {
+        if (activeController)
         {
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, 1000.0f))
+            if (activeController.GetComponent<VRTK_ControllerEvents>().triggerClicked && pointer && objPlacement)
             {
-                objPlacement.transform.position = hit.point;
+                objPlacement.transform.position = pointer.pointerRenderer.GetDestinationHit().point;
+            }
+            if (!activeController.GetComponent<VRTK_ControllerEvents>().triggerClicked && objPlacement)
+            {
+                objPlacement.transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+                objPlacement.GetComponent<CabinetManager>().cabinetState = CabinetState.Placed;
+                objPlacement = null;
+            }
+            if(objPlacement)
+            {
+                if(objPlacement.gameObject.GetComponent<CabinetManager>().cabinetState == CabinetState.Placed)
+                {
+                    objPlacement.transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+                    objPlacement = null;
+                }
             }
         }
-        if (Input.GetMouseButtonUp(0) && objPlacement)
+    }
+
+    void OnLeftTriggerClicked(object sender, ControllerInteractionEventArgs e)
+    {
+        activeController = leftController;
+        InstantiateCabinet(activeController);
+    }
+
+    void OnRightTriggerClicked(object sender, ControllerInteractionEventArgs e)
+    {
+        activeController = rightController;
+        //InstantiateCabinet(activeController);
+    }
+
+    void InstantiateCabinet(GameObject _controller)
+    {
+        VRTK_Pointer[] pointers = _controller.GetComponents<VRTK_Pointer>();
+        pointer = pointers[1];
+        Transform hit = pointer.pointerRenderer.GetDestinationHit().transform;
+        if (hit.gameObject.layer == 8)
         {
+            objPlacement = Instantiate(cabinetPrefab, pointer.pointerRenderer.GetDestinationHit().point, Quaternion.identity);
+        }
+    }
+
+    public void CabinetStateChangedHandler(CabinetState newState)
+    {
+        if (newState == CabinetState.Snapped)
+        {
+            Debug.Log(string.Format("Placement Manager - Cabinet Snapped: {0}", objPlacement.gameObject.transform.position.ToString()));
+            objPlacement.GetComponent<CabinetManager>().cabinetState = CabinetState.Placed;
+        }
+        if (newState == CabinetState.Placed)
+        {
+            Debug.Log("Placement Manager - Cabinet Placed");
+            objPlacement.transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
             objPlacement = null;
         }
     }
 }
+
+
+
