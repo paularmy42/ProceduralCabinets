@@ -18,10 +18,23 @@ public class PropertiesPanelManager : MonoBehaviour
     public Text heightSliderValue;
     public Slider heightSlider;
 
+    public Dropdown cabinetSelector;
     public Dropdown faceMaterialSelector;
 
     private PlacementManager manager;
+    private List<ICabinet> library = CabinetLibrary.Cabinets;
+    private void Awake()
+    {
+        //Build cabinet list for Cabinet selector droplist
+        List<string> cabinetList = new List<string>();
+        foreach (ICabinet cabinet in library)
+        {
+            cabinetList.Add(cabinet.Name.ToString());
+        }
+        cabinetSelector.ClearOptions();
+        cabinetSelector.AddOptions(cabinetList);
 
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +44,7 @@ public class PropertiesPanelManager : MonoBehaviour
         PlacementManager.depth = (int)depthSlider.value;
         PlacementManager.height = (int)heightSlider.value;
         PlacementManager.faceMat = manager.faceMaterials[faceMaterialSelector.value];
+        PlacementManager.cabinetType = cabinetSelector.options[cabinetSelector.value].text;
     }
 
     void OnLeftButtonTwoPressed(object sender, ControllerInteractionEventArgs e)
@@ -59,6 +73,8 @@ public class PropertiesPanelManager : MonoBehaviour
 
     public void OnCabinetTypeChanged()
     {
+        Debug.Log(string.Format("Cabinet selection chnaged to {0}", cabinetSelector.options[cabinetSelector.value].text));
+        PlacementManager.cabinetType = cabinetSelector.options[cabinetSelector.value].text;
     }
 
     public void OnFaceMaterialChanged()

@@ -8,6 +8,7 @@ TagManager:
   - Carcase
   - Front
   - TeleportIgnore
+  - Wall
   layers:
   - Default
   - TransparentFX

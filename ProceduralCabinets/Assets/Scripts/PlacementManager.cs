@@ -6,7 +6,6 @@ using VRTK;
 public class PlacementManager : MonoBehaviour
 {
     public GameObject cabinetPrefab;
-    public GameObject doorHinge;
     public GameObject leftController;
     public GameObject rightController;
     private GameObject activeController;
@@ -43,6 +42,13 @@ public class PlacementManager : MonoBehaviour
         set { _faceMat = value; }
     }
 
+    private static string _cabinetType;
+    public static string cabinetType
+    {
+        get { return _cabinetType; }
+        set { _cabinetType = value; }
+    }
+
     private GameObject objPlacement;
     private VRTK_Pointer pointer;
 
@@ -50,7 +56,7 @@ public class PlacementManager : MonoBehaviour
     {
         CabinetManager.OnCabinetStateChanged.AddListener(CabinetStateChangedHandler);
         leftController.GetComponent<VRTK_ControllerEvents>().TriggerClicked += new ControllerInteractionEventHandler(OnLeftTriggerClicked);
-        //leftController.GetComponent<VRTK_ControllerEvents>().ButtonTwoPressed += new ControllerInteractionEventHandler(OnLeftTriggerClicked);
+        leftController.GetComponent<VRTK_ControllerEvents>().ButtonTwoPressed += new ControllerInteractionEventHandler(OnLeftTriggerClicked);
         rightController.GetComponent<VRTK_ControllerEvents>().TriggerClicked += new ControllerInteractionEventHandler(OnRightTriggerClicked);
     }
 
