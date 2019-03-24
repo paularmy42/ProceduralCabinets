@@ -64,7 +64,6 @@ public class BaseCabinet: ICabinet
 
     public void BuildCabinet(float worldLength, float worldHeight, float worldDepth, float worldThickness, Transform _parent)
     {
-        Debug.Log(this.ComponentList.Count());
         CabinetObjects.BuildCabinet(worldLength, worldHeight, worldDepth, worldThickness, _parent, this);
     }
 }
@@ -220,7 +219,8 @@ public class CabinetObjects: MonoBehaviour
         _parent.GetComponent<MeshFilter>().mesh.RecalculateNormals();
         MeshUtility.Optimize(_parent.GetComponent<MeshFilter>().mesh);
         _parent.gameObject.AddComponent<BoxCollider>();
-        //transform.gameObject.layer = 0;
+        BoxCollider collider = _parent.gameObject.GetComponent<BoxCollider>();
+        //collider.size = new Vector3(collider.size.x + 0.1f, collider.size.y, collider.size.z + 0.1f);
         _parent.gameObject.SetActive(true);
         //Find all children with tag "Carcase" and Destroy
         for (int j = 0; j < +_parent.childCount; j++)

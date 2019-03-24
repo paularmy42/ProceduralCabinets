@@ -48,7 +48,7 @@ public class EndLeftComponent: IComponent
 
     public void SetCabinetDimensions(float _length, float _height, float _depth, float _thickness)
     {
-        Px = _thickness / 2;
+        Px = -_length / 2 + _thickness / 2;
         Py = _height / 2;
         Pz = 0f;
         Sx = _thickness;
@@ -80,7 +80,7 @@ public class EndRightComponent : IComponent
 
     public void SetCabinetDimensions(float _length, float _height, float _depth, float _thickness)
     {
-        Px = _length - _thickness / 2;
+        Px = _length / 2 - _thickness / 2;
         Py = _height / 2;
         Pz = 0f;
         Sx = _thickness;
@@ -112,7 +112,7 @@ public class BackComponent : IComponent
 
     public void SetCabinetDimensions(float _length, float _height, float _depth, float _thickness)
     {
-        Px = _length / 2;
+        Px = 0;
         Py = _height / 2;
         Pz = _depth / 2 - _thickness / 2;
         Sx = _length - _thickness * 2;
@@ -144,7 +144,7 @@ public class BottomComponent : IComponent
 
     public void SetCabinetDimensions(float _length, float _height, float _depth, float _thickness)
     {
-        Px = _length / 2;
+        Px = 0;
         Py = _thickness / 2;
         Pz = -_thickness / 2;
         Sx = _length - _thickness * 2;
@@ -176,7 +176,7 @@ public class TopComponent : IComponent
 
     public void SetCabinetDimensions(float _length, float _height, float _depth, float _thickness)
     {
-        Px = _length / 2;
+        Px = 0;
         Py = _height - _thickness / 2;
         Pz = -_thickness / 2;
         Sx = _length - _thickness * 2;
@@ -208,7 +208,7 @@ public class RailComponent : IComponent
 
     public void SetCabinetDimensions(float _length, float _height, float _depth, float _thickness)
     {
-        Px = _length / 2;
+        Px = 0;
         Py = _height - _thickness / 2;
         Pz = -_depth / 2 + 0.130f / 2; //Replace hardcoded 0.130f with user modifiable variable
         Sx = _length - _thickness * 2;
@@ -253,7 +253,7 @@ public class AdjShelfComponent : IComponent
         {
             AdjShelfSetback = 0;
         }
-        Px = _length / 2;
+        Px = 0;
         Py = _height / (AdjShelfQty + 1);
         Pz = -_thickness / 2 + AdjShelfSetback/1000/2;
         Sx = _length - _thickness * 2;
@@ -315,16 +315,16 @@ public class DoorComponent : IComponent, IInteractableComponent
 
         if(HingeOn == HingePoint.Left)
         {
-            Px = _length / (2 * DoorQty) + 0.001f;
-            HingeX = 0f;
+            Px = _length / (2 * DoorQty);
+            HingeX = -_length / 2;
             HingeY = _height / 2;
             HingeZ = -_depth / 2 - _thickness / 2;
             RotateHingePoint = 0f;
         }
         if (HingeOn == HingePoint.Right)
         {
-            Px = -(_length / (2 * DoorQty) + 0.001f);
-            HingeX = _length;
+            Px = -(_length / (2 * DoorQty));
+            HingeX = _length / 2;
             HingeY = _height / 2;
             HingeZ = -_depth / 2 - _thickness / 2;
             RotateHingePoint = 180f;

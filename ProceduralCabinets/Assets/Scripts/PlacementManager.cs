@@ -52,6 +52,10 @@ public class PlacementManager : MonoBehaviour
     private GameObject objPlacement;
     private VRTK_Pointer pointer;
 
+    private CabinetState state;
+    private CabinetManager manager;
+    private Vector3 currentPosition;
+
     void Start()
     {
         CabinetManager.OnCabinetStateChanged.AddListener(CabinetStateChangedHandler);
@@ -66,7 +70,26 @@ public class PlacementManager : MonoBehaviour
         {
             if (activeController.GetComponent<VRTK_ControllerEvents>().triggerClicked && pointer && objPlacement)
             {
-                objPlacement.transform.position = pointer.pointerRenderer.GetDestinationHit().point;
+                currentPosition = objPlacement.transform.position;
+                Vector3 newPos = new Vector3();
+                if (state == CabinetState.Snapped && (manager.collisionLeft || manager.collisionRight))
+                {
+                    newPos.x = manager.snapPos.x;
+                }
+                else
+                {
+                    newPos.x = pointer.pointerRenderer.GetDestinationHit().point.x;
+                }
+                if (state == CabinetState.Snapped && manager.collisionRear)
+                {
+                    newPos.z = manager.snapPos.z;
+                }
+                else
+                {
+                    newPos.z = pointer.pointerRenderer.GetDestinationHit().point.z;
+                }
+                newPos.y = objPlacement.transform.position.y;
+                objPlacement.transform.position = newPos;
             }
             if (!activeController.GetComponent<VRTK_ControllerEvents>().triggerClicked && objPlacement)
             {
@@ -76,7 +99,8 @@ public class PlacementManager : MonoBehaviour
             }
             if(objPlacement)
             {
-                if(objPlacement.gameObject.GetComponent<CabinetManager>().cabinetState == CabinetState.Placed)
+                state = manager.cabinetState;
+                if (objPlacement.gameObject.GetComponent<CabinetManager>().cabinetState == CabinetState.Placed)
                 {
                     objPlacement.transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
                     objPlacement = null;
@@ -105,6 +129,8 @@ public class PlacementManager : MonoBehaviour
         if (hit.gameObject.layer == 8)
         {
             objPlacement = Instantiate(cabinetPrefab, pointer.pointerRenderer.GetDestinationHit().point, Quaternion.identity);
+            manager = objPlacement.GetComponent<CabinetManager>();
+            Debug.Log("New cabinet instantiated");
         }
     }
 
@@ -113,11 +139,11 @@ public class PlacementManager : MonoBehaviour
         if (newState == CabinetState.Snapped)
         {
             Debug.Log(string.Format("Placement Manager - Cabinet Snapped: {0}", objPlacement.gameObject.transform.position.ToString()));
-            objPlacement.GetComponent<CabinetManager>().cabinetState = CabinetState.Placed;
+            //objPlacement.GetComponent<CabinetManager>().cabinetState = CabinetState.Placed;
         }
         if (newState == CabinetState.Placed)
         {
-            Debug.Log("Placement Manager - Cabinet Placed");
+            //Debug.Log("Placement Manager - Cabinet Placed");
             objPlacement.transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
             objPlacement = null;
         }
